@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMB 2026 — Tasks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#0D1B2A; --navy2:#122234; --navy3:#1a2f45;
+      --red:#C8102E; --red2:#a50d26;
+      --muted:#8a9bb0; --muted2:#6b7f96; --white:#ffffff;
+      --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+      --card-bg:rgba(255,255,255,0.04); --card-hover:rgba(255,255,255,0.07);
+      --font-display:'DM Serif Display',serif; --font-body:'DM Sans',sans-serif;
+      --idea:#a78bfa; --todo:#8a9bb0; --doing:#4fa3e0; --done:#4caf7d;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--navy);color:var(--white);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(200,16,46,0.08) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+    /* LOGIN */
+    #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:1}
+    .login-box{width:360px;text-align:center}
+    .login-logo{font-family:var(--font-display);font-size:13px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+    .login-title{font-family:var(--font-display);font-size:36px;color:var(--white);line-height:1.1;margin-bottom:6px}
+    .login-title em{color:var(--red);font-style:italic}
+    .login-sub{font-size:13px;color:var(--muted);margin-bottom:40px;font-weight:300}
+    .login-field{margin-bottom:12px}
+    .login-field input{width:100%;background:rgba(255,255,255,0.06);border:0.5px solid var(--border2);border-radius:8px;padding:14px 18px;font-family:var(--font-body);font-size:14px;color:var(--white);outline:none;transition:border-color .2s;letter-spacing:.1em}
+    .login-field input:focus{border-color:rgba(200,16,46,0.5)}
+    .login-field input::placeholder{color:var(--muted);letter-spacing:0}
+    .login-btn{width:100%;background:var(--red);border:none;border-radius:8px;padding:14px;font-family:var(--font-body);font-size:14px;font-weight:500;color:var(--white);cursor:pointer;transition:background .2s,transform .1s}
+    .login-btn:hover{background:var(--red2)}
+    .login-btn:active{transform:scale(0.98)}
+    .login-error{font-size:12px;color:#f0727f;margin-top:10px;display:none}
+
+    /* APP */
+    #app-screen{display:none;position:relative;z-index:1}
+    .topbar{background:var(--navy2);border-bottom:0.5px solid var(--border);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+    .topbar-brand{font-family:var(--font-display);font-size:16px;color:var(--white);display:flex;align-items:center;gap:10px}
+    .topbar-brand span{color:var(--red);font-style:italic}
+    .topbar-dot{width:6px;height:6px;border-radius:50%;background:var(--red);opacity:.7}
+    .topbar-right{display:flex;align-items:center;gap:8px}
+    .btn{font-family:var(--font-body);font-size:13px;font-weight:400;padding:7px 16px;border-radius:7px;border:0.5px solid var(--border2);background:transparent;color:var(--white);cursor:pointer;transition:background .15s;white-space:nowrap}
+    .btn:hover{background:var(--card-hover)}
+    .btn-red{background:var(--red);border-color:var(--red);font-weight:500}
+    .btn-red:hover{background:var(--red2);border-color:var(--red2)}
+    .btn-ghost{border-color:transparent;color:var(--muted);font-size:12px}
+    .btn-ghost:hover{color:var(--white);background:transparent}
+    .btn-delete{background:none;border:0.5px solid rgba(200,16,46,0.3);color:#f0727f}
+    .btn-delete:hover{background:rgba(200,16,46,0.1)}
+
+    /* FILTERS */
+    .filters-bar{padding:14px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:0.5px solid var(--border)}
+    .filters-bar select{font-family:var(--font-body);font-size:13px;padding:7px 12px;border-radius:7px;border:0.5px solid var(--border2);background:var(--card-bg);color:var(--white);outline:none;cursor:pointer}
+    .filters-bar select option{background:var(--navy2);color:var(--white)}
+    .filter-sep{width:1px;height:20px;background:var(--border);margin:0 2px}
+    .stats-pills{display:flex;gap:8px;margin-left:auto}
+    .stat-pill{font-size:12px;padding:4px 12px;border-radius:20px;border:0.5px solid var(--border);color:var(--muted);display:flex;align-items:center;gap:5px}
+    .stat-pill .dot{width:6px;height:6px;border-radius:50%}
+
+    /* BOARD */
+    .board-wrap{padding:24px 28px;overflow-x:auto}
+    .board{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start;min-width:900px}
+    .col{background:var(--card-bg);border:0.5px solid var(--border);border-radius:12px;overflow:hidden}
+    .col-head{padding:13px 14px 11px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .col-head-left{display:flex;align-items:center;gap:8px}
+    .col-indicator{width:8px;height:8px;border-radius:50%}
+    .col-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    .col-count{font-size:11px;color:var(--muted2);background:rgba(255,255,255,0.06);border-radius:10px;padding:2px 8px}
+    .col-body{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:80px}
+    .empty-col{font-size:12px;color:var(--muted2);text-align:center;padding:24px 0;opacity:.6}
+
+    /* CARDS */
+    .card{background:rgba(255,255,255,0.05);border:0.5px solid var(--border);border-radius:9px;padding:11px 13px;cursor:pointer;transition:background .15s,border-color .2s,transform .15s;position:relative;overflow:hidden}
+    .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:9px 0 0 9px;opacity:0;transition:opacity .2s}
+    .card:hover{background:var(--card-hover);border-color:var(--border2);transform:translateY(-1px)}
+    .card:hover::before{opacity:1}
+    .card.idea::before{background:var(--idea)}
+    .card.todo::before{background:var(--todo)}
+    .card.doing::before{background:var(--doing)}
+    .card.done::before{background:var(--done)}
+    .card-title{font-size:13px;font-weight:500;color:var(--white);line-height:1.4;margin-bottom:7px}
+    .card.done .card-title{opacity:.55;text-decoration:line-through;text-decoration-color:rgba(255,255,255,0.25)}
+    .card-dates{display:flex;align-items:center;gap:6px;margin-bottom:7px}
+    .card-date-item{font-size:11px;color:var(--muted2)}
+    .card-date-item.overdue{color:#f0727f}
+    .card-date-sep{font-size:10px;color:var(--border2)}
+    .card-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+    .badge{font-size:11px;padding:2px 8px;border-radius:20px;white-space:nowrap}
+    .badge-area{background:rgba(200,16,46,0.15);color:#f0727f;border:0.5px solid rgba(200,16,46,0.25)}
+    .badge-person{background:rgba(255,255,255,0.07);color:var(--muted);border:0.5px solid var(--border)}
+    .card-last-update{font-size:11px;color:var(--muted2);margin-top:7px;line-height:1.4;font-style:italic;border-top:0.5px solid var(--border);padding-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-links-preview{margin-top:7px;display:flex;gap:5px;flex-wrap:wrap}
+    .link-thumb{width:34px;height:34px;border-radius:6px;overflow:hidden;border:0.5px solid var(--border)}
+    .link-thumb img{width:100%;height:100%;object-fit:cover}
+    .link-pill{font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,0.05);border:0.5px solid var(--border);color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+    .pdf-pill{font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(200,16,46,0.12);border:0.5px solid rgba(200,16,46,0.3);color:#f0727f;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+    .pdf-pill:hover{background:rgba(200,16,46,0.22)}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(5,12,20,0.88);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(4px)}
+    .modal{background:var(--navy2);border:0.5px solid var(--border2);border-radius:14px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;padding:24px}
+    .modal::-webkit-scrollbar{width:4px}
+    .modal::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+    .modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+    .modal-title{font-family:var(--font-display);font-size:20px;color:var(--white)}
+    .modal-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0;line-height:1;transition:color .15s}
+    .modal-close:hover{color:var(--white)}
+    .form-row{margin-bottom:13px}
+    .form-row label{display:block;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+    .form-row input,.form-row select,.form-row textarea{width:100%;background:rgba(255,255,255,0.05);border:0.5px solid var(--border2);border-radius:8px;padding:9px 13px;font-family:var(--font-body);font-size:13px;color:var(--white);outline:none;transition:border-color .15s}
+    .form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:rgba(200,16,46,0.45)}
+    .form-row input::placeholder,.form-row textarea::placeholder{color:var(--muted2);font-weight:300}
+    .form-row select option{background:var(--navy2)}
+    .form-row textarea{resize:vertical;min-height:70px;line-height:1.5;font-weight:300}
+    .form-row input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .form-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+    .section-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
+    .section-divider{border:none;border-top:0.5px solid var(--border);margin:16px 0}
+
+    /* UPDATES */
+    .updates-log{max-height:200px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:1px}
+    .updates-log::-webkit-scrollbar{width:3px}
+    .updates-log::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+    .update-item{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-radius:7px;background:rgba(255,255,255,0.03)}
+    .update-item:hover{background:rgba(255,255,255,0.06)}
+    .update-dot{width:6px;height:6px;border-radius:50%;background:var(--doing);margin-top:5px;flex-shrink:0}
+    .update-text{font-size:13px;color:var(--white);flex:1;line-height:1.4;font-weight:300}
+    .update-time{font-size:11px;color:var(--muted2);flex-shrink:0;margin-top:2px;white-space:nowrap}
+    .update-delete{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:14px;padding:0 2px;opacity:0;transition:opacity .15s,color .15s}
+    .update-item:hover .update-delete{opacity:1}
+    .update-delete:hover{color:#f0727f}
+    .update-add{display:flex;gap:8px}
+    .update-add input{flex:1;background:rgba(255,255,255,0.05);border:0.5px solid var(--border2);border-radius:8px;padding:9px 13px;font-family:var(--font-body);font-size:13px;color:var(--white);outline:none}
+    .update-add input:focus{border-color:rgba(200,16,46,0.45)}
+    .update-add input::placeholder{color:var(--muted2);font-weight:300}
+
+    /* UPLOAD */
+    .upload-zone{border:0.5px dashed var(--border2);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:border-color .15s;margin-bottom:8px;position:relative}
+    .upload-zone:hover{border-color:rgba(200,16,46,0.45)}
+    .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .upload-zone-text{font-size:12px;color:var(--muted2);pointer-events:none}
+    .upload-progress{font-size:12px;color:var(--doing);margin-bottom:8px;display:none}
+    .link-preview-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+    .link-preview-item{border-radius:8px;overflow:hidden;border:0.5px solid var(--border);background:var(--navy3)}
+    .link-preview-item img{width:88px;height:88px;object-fit:cover;display:block;cursor:pointer;transition:opacity .15s}
+    .link-preview-item img:hover{opacity:.8}
+    .link-label-preview{font-size:10px;color:var(--muted);padding:4px 7px;max-width:88px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .link-item{display:flex;gap:7px;margin-bottom:7px;align-items:center}
+    .link-item input{flex:1;background:rgba(255,255,255,0.05);border:0.5px solid var(--border2);border-radius:8px;padding:8px 11px;font-family:var(--font-body);font-size:12px;color:var(--white);outline:none}
+    .link-item input:focus{border-color:rgba(200,16,46,0.45)}
+    .link-item input::placeholder{color:var(--muted2)}
+    .link-remove{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:18px;padding:4px;transition:color .15s;flex-shrink:0}
+    .link-remove:hover{color:#f0727f}
+    .add-link-btn{font-size:12px;color:var(--muted);background:none;border:0.5px dashed var(--border2);border-radius:7px;padding:7px 14px;cursor:pointer;width:100%;font-family:var(--font-body);transition:border-color .15s,color .15s;margin-top:4px}
+    .add-link-btn:hover{border-color:rgba(200,16,46,0.4);color:var(--white)}
+
+    /* LIGHTBOX */
+    .lightbox{position:fixed;inset:0;background:rgba(5,12,20,0.95);display:flex;align-items:center;justify-content:center;z-index:300;cursor:pointer}
+    .lightbox img{max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain}
+
+    .modal-actions{display:flex;gap:8px;margin-top:18px;padding-top:16px;border-top:0.5px solid var(--border);flex-wrap:wrap}
+    .team-member-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)}
+    .team-member-row:last-child{border-bottom:none}
+    .team-member-name{font-size:14px;color:var(--white);display:flex;align-items:center;gap:10px}
+    .avatar{width:28px;height:28px;border-radius:50%;background:rgba(200,16,46,0.2);border:0.5px solid rgba(200,16,46,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#f0727f;flex-shrink:0}
+    .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);font-size:13px;gap:10px}
+    .spinner{width:16px;height:16px;border:1.5px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+    @media(max-width:768px){
+      .topbar{padding:0 16px}.filters-bar{padding:12px 16px}.board-wrap{padding:14px 16px}
+      .stats-pills{display:none}.form-grid,.form-grid3{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">Innovation Meeting Brasil</div>
+    <div class="login-title">Tasks <em>2026</em></div>
+    <div class="login-sub">Gestão de produção do evento</div>
+    <div class="login-field">
+      <input type="password" id="pw-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Senha incorreta. Tente novamente.</div>
+  </div>
+</div>
+
+<div id="app-screen">
+  <div class="topbar">
+    <div class="topbar-brand"><div class="topbar-dot"></div>IMB <span>Tasks</span></div>
+    <div class="topbar-right">
+      <button class="btn" onclick="openAreasModal()">Áreas</button>
+      <button class="btn" onclick="openTeamModal()">Equipe</button>
+      <button class="btn btn-red" onclick="openModal(null)">+ Nova tarefa</button>
+      <button class="btn btn-ghost" onclick="logout()">Sair</button>
+    </div>
+  </div>
+  <div class="filters-bar">
+    <select id="f-area" onchange="render()"><option value="">Todas as áreas</option></select>
+    <select id="f-person" onchange="render()"><option value="">Toda a equipe</option></select>
+    <select id="f-sort" onchange="render()">
+      <option value="created">Mais recentes</option>
+      <option value="date">Por prazo</option>
+      <option value="area">Por área</option>
+    </select>
+    <div class="filter-sep"></div>
+    <div class="stats-pills" id="stats-pills"></div>
+  </div>
+  <div class="board-wrap">
+    <div class="board" id="board">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Carregando...</div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-slot"></div>
+
+<script>
+const SUPA_URL='https://zqzwwvcadjwpsligvser.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpxend3dmNhZGp3cHNsaWd2c2VyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNzY5MzYsImV4cCI6MjA5MDc1MjkzNn0.-z7fcNDsgWESKuxaE1WZ-RZNGnN6hx1b-y4kyPbqiLI';
+const APP_PASSWORD='imb2026';
+const BUCKET='task-photos';
+
+let AREAS=[],tasks=[],team=[],taskLinks={},taskUpdates={};
+let editingId=null,pendingLinks=[];
+
+function hdrs(){return{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'}}
+
+async function api(method,path,body){
+  const res=await fetch(SUPA_URL+'/rest/v1/'+path,{method,headers:hdrs(),body:body?JSON.stringify(body):undefined});
+  if(!res.ok)throw new Error(await res.text());
+  const t=await res.text();return t?JSON.parse(t):null;
+}
+
+async function uploadFile(file){
+  const ext=file.name.split('.').pop();
+  const name=Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;
+  const res=await fetch(SUPA_URL+'/storage/v1/object/'+BUCKET+'/'+name,{
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type,'x-upsert':'false'},
+    body:file
+  });
+  if(!res.ok)throw new Error('Upload falhou: '+await res.text());
+  return SUPA_URL+'/storage/v1/object/public/'+BUCKET+'/'+name;
+}
+
+function isAuthValid(){const ts=localStorage.getItem('imb_auth');if(!ts)return false;return(Date.now()-parseInt(ts))<86400000}
+
+function doLogin(){
+  const pw=document.getElementById('pw-input').value;
+  if(pw===APP_PASSWORD){
+    localStorage.setItem('imb_auth',Date.now().toString());
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app-screen').style.display='block';
+    loadAll();
+  }else{
+    document.getElementById('login-error').style.display='block';
+    document.getElementById('pw-input').value='';
+  }
+}
+
+function logout(){localStorage.removeItem('imb_auth');location.reload()}
+
+async function loadAll(){
+  const[t,tm,tl,tu,ar]=await Promise.all([
+    api('GET','tasks?order=created_at.desc&select=*'),
+    api('GET','team_members?order=name.asc'),
+    api('GET','task_links?select=*'),
+    api('GET','task_updates?order=created_at.asc&select=*'),
+    api('GET','areas?order=name.asc')
+  ]);
+  tasks=t||[];team=(tm||[]).map(x=>x.name);AREAS=(ar||[]).map(x=>x.name);
+  taskLinks={};(tl||[]).forEach(l=>{if(!taskLinks[l.task_id])taskLinks[l.task_id]=[];taskLinks[l.task_id].push(l)});
+  taskUpdates={};(tu||[]).forEach(u=>{if(!taskUpdates[u.task_id])taskUpdates[u.task_id]=[];taskUpdates[u.task_id].push(u)});
+  render();
+}
+
+function populateAreaFilter(){
+  const sel=document.getElementById('f-area'),cur=sel.value;
+  sel.innerHTML='<option value="">Todas as áreas</option>';
+  AREAS.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o)});
+  if(cur)sel.value=cur;
+}
+
+function populateTeamFilter(){
+  const sel=document.getElementById('f-person'),cur=sel.value;
+  sel.innerHTML='<option value="">Toda a equipe</option>';
+  team.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o)});
+  if(cur)sel.value=cur;
+}
+
+function render(){
+  populateAreaFilter();populateTeamFilter();
+  const fa=document.getElementById('f-area').value;
+  const fp=document.getElementById('f-person').value;
+  const fs=document.getElementById('f-sort').value;
+  let filtered=tasks.filter(t=>(!fa||t.area===fa)&&(!fp||t.person===fp));
+  if(fs==='date')filtered.sort((a,b)=>(a.due_date||'9999')>(b.due_date||'9999')?1:-1);
+  else if(fs==='area')filtered.sort((a,b)=>(a.area||'').localeCompare(b.area||''));
+  const stages=[
+    {stage:'idea',label:'Ideias para validar',color:'var(--idea)'},
+    {stage:'todo',label:'A fazer',color:'var(--todo)'},
+    {stage:'doing',label:'Em curso',color:'var(--doing)'},
+    {stage:'done',label:'Concluído',color:'var(--done)'},
+  ];
+  const counts={idea:0,todo:0,doing:0,done:0};
+  filtered.forEach(t=>{if(t.stage in counts)counts[t.stage]++});
+  document.getElementById('stats-pills').innerHTML=
+    `<div class="stat-pill"><span class="dot" style="background:var(--idea)"></span>${counts.idea} ideias</div>`+
+    `<div class="stat-pill"><span class="dot" style="background:var(--todo)"></span>${counts.todo} a fazer</div>`+
+    `<div class="stat-pill"><span class="dot" style="background:var(--doing)"></span>${counts.doing} em curso</div>`+
+    `<div class="stat-pill"><span class="dot" style="background:var(--done)"></span>${counts.done} concluídas</div>`;
+  document.getElementById('board').innerHTML=stages.map(col=>{
+    const items=filtered.filter(t=>t.stage===col.stage);
+    return `<div class="col">
+      <div class="col-head">
+        <div class="col-head-left"><div class="col-indicator" style="background:${col.color}"></div><span class="col-label">${col.label}</span></div>
+        <span class="col-count">${items.length}</span>
+      </div>
+      <div class="col-body">${items.length===0?'<div class="empty-col">Nenhuma tarefa</div>':items.map(cardHTML).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+function isImg(u){return/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(u)}
+function isPdf(u){return/\.pdf(\?.*)?$/i.test(u)}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtDate(d){if(!d)return'';const[y,m,day]=d.split('-');return`${day}/${m}`}
+function fmtDT(ts){
+  if(!ts)return'';const d=new Date(ts);
+  return`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function cardHTML(t){
+  const links=taskLinks[t.id]||[];
+  const updates=taskUpdates[t.id]||[];
+  const last=updates.length?updates[updates.length-1]:null;
+  const today=new Date().toISOString().split('T')[0];
+  const overdue=t.due_date&&t.due_date<today&&t.stage!=='done';
+  const datesHTML=(t.start_date||t.due_date)?`<div class="card-dates">
+    ${t.start_date?`<span class="card-date-item">Início ${fmtDate(t.start_date)}</span>`:''}
+    ${t.start_date&&t.due_date?`<span class="card-date-sep">→</span>`:''}
+    ${t.due_date?`<span class="card-date-item${overdue?' overdue':''}">Prazo ${fmtDate(t.due_date)}</span>`:''}
+  </div>`:'';
+  const linksHTML=links.length?`<div class="card-links-preview">${
+    links.slice(0,4).map(l=>{
+      if(isImg(l.url))return`<div class="link-thumb"><img src="${esc(l.url)}" loading="lazy"/></div>`;
+      if(isPdf(l.url))return`<a href="${esc(l.url)}" target="_blank" onclick="event.stopPropagation()" class="pdf-pill">PDF ${esc(l.label||'')}</a>`;
+      return`<span class="link-pill">${esc(l.label||'Link')}</span>`;
+    }).join('')
+  }${links.length>4?`<span class="link-pill">+${links.length-4}</span>`:''}</div>`:'';
+  const updateHTML=last?`<div class="card-last-update">${esc(last.text)} <span style="font-size:10px;opacity:.7">${fmtDT(last.created_at)}</span></div>`:'';
+  return`<div class="card ${t.stage}" onclick="openModal('${t.id}')">
+    <div class="card-title">${esc(t.title)}</div>
+    ${datesHTML}
+    <div class="card-meta">
+      <span class="badge badge-area">${esc(t.area)}</span>
+      ${t.person?`<span class="badge badge-person">${esc(t.person)}</span>`:''}
+    </div>
+    ${updateHTML}${linksHTML}
+  </div>`;
+}
+
+function openModal(id){
+  editingId=id;
+  const t=id?(tasks.find(x=>x.id===id)||{}):{};
+  pendingLinks=id?[...(taskLinks[id]||[])]:[];
+  const teamOpts=team.map(p=>`<option value="${esc(p)}"${t.person===p?' selected':''}>${esc(p)}</option>`).join('');
+  const areaOpts=AREAS.map(a=>`<option value="${esc(a)}"${t.area===a?' selected':''}>${esc(a)}</option>`).join('');
+  document.getElementById('modal-slot').innerHTML=`
+    <div class="modal-bg" onclick="closeBg(event)">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">${id?'Editar tarefa':'Nova tarefa'}</div>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="form-row"><label>Título</label>
+          <input id="m-title" value="${esc(t.title||'')}" placeholder="O que precisa ser feito?"/>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Área</label>
+            <select id="m-area"><option value="">Selecione...</option>${areaOpts}</select>
+          </div>
+          <div class="form-row"><label>Responsável</label>
+            <select id="m-person"><option value="">Sem responsável</option>${teamOpts}</select>
+          </div>
+        </div>
+        <div class="form-grid3">
+          <div class="form-row"><label>Status</label>
+            <select id="m-stage">
+              <option value="idea"${(!t.stage||t.stage==='idea')?' selected':''}>Ideia para validar</option>
+              <option value="todo"${t.stage==='todo'?' selected':''}>A fazer</option>
+              <option value="doing"${t.stage==='doing'?' selected':''}>Em curso</option>
+              <option value="done"${t.stage==='done'?' selected':''}>Concluído</option>
+            </select>
+          </div>
+          <div class="form-row"><label>Data de início</label>
+            <input type="date" id="m-start" value="${t.start_date||''}"/>
+          </div>
+          <div class="form-row"><label>Prazo final</label>
+            <input type="date" id="m-date" value="${t.due_date||''}"/>
+          </div>
+        </div>
+        <div class="form-row"><label>Descrição / como fazer</label>
+          <textarea id="m-desc" placeholder="Detalhes, passos, contatos...">${esc(t.description||'')}</textarea>
+        </div>
+        ${id?`
+        <hr class="section-divider"/>
+        <span class="section-label">Atualizações do processo</span>
+        <div class="updates-log" id="updates-log"></div>
+        <div class="update-add">
+          <input id="new-update" placeholder="Ex: Gi validou, aguardando proposta..." onkeydown="if(event.key==='Enter')addUpdate()"/>
+          <button class="btn btn-red" onclick="addUpdate()">Registrar</button>
+        </div>`:''}
+        <hr class="section-divider"/>
+        <span class="section-label">Fotos, PDFs e links</span>
+        <div class="upload-zone">
+          <input type="file" accept="image/*,application/pdf" multiple onchange="handleUpload(this)"/>
+          <div class="upload-zone-text">Clique ou arraste fotos e PDFs aqui para fazer upload</div>
+        </div>
+        <div class="upload-progress" id="upload-progress"></div>
+        <div id="links-preview-row" class="link-preview-row"></div>
+        <div id="links-list"></div>
+        <button class="add-link-btn" onclick="addLinkField()">+ Adicionar link manualmente</button>
+        <div class="modal-actions">
+          <button class="btn btn-red" onclick="saveTask()">Salvar</button>
+          <button class="btn" onclick="closeModal()">Cancelar</button>
+          ${id?`<button class="btn btn-delete" onclick="deleteTask('${id}')">Excluir</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  renderLinksList();
+  if(id)renderUpdatesList();
+}
+
+async function handleUpload(input){
+  const files=Array.from(input.files);if(!files.length)return;
+  const prog=document.getElementById('upload-progress');prog.style.display='block';
+  for(const file of files){
+    try{
+      prog.textContent='Enviando '+file.name+'...';
+      const url=await uploadFile(file);
+      pendingLinks.push({label:file.name.replace(/\.[^.]+$/,''),url});
+      renderLinksList();
+    }catch(e){alert('Erro no upload: '+e.message)}
+  }
+  prog.style.display='none';input.value='';
+}
+
+function renderLinksList(){
+  const list=document.getElementById('links-list');if(!list)return;
+  list.innerHTML=pendingLinks.map((l,i)=>`
+    <div class="link-item">
+      <input placeholder="Nome (ex: Referência palco)" value="${esc(l.label||'')}" oninput="pendingLinks[${i}].label=this.value" style="flex:0 0 148px;width:148px"/>
+      <input placeholder="URL" value="${esc(l.url||'')}" oninput="pendingLinks[${i}].url=this.value;renderPreview()"/>
+      <button class="link-remove" onclick="removeLink(${i})">×</button>
+    </div>`).join('');
+  renderPreview();
+}
+
+function renderPreview(){
+  const p=document.getElementById('links-preview-row');if(!p)return;
+  p.innerHTML=pendingLinks.map(l=>{
+    if(l.url&&isImg(l.url))return`<div class="link-preview-item">
+      <img src="${esc(l.url)}" loading="lazy" onclick="openLightbox('${esc(l.url)}')" onerror="this.parentElement.style.display='none'"/>
+      <div class="link-label-preview">${esc(l.label||'Foto')}</div>
+    </div>`;
+    if(l.url&&isPdf(l.url))return`<a href="${esc(l.url)}" target="_blank" class="pdf-pill" style="margin:0 4px 4px 0">PDF ${esc(l.label||'')}</a>`;
+    return'';
+  }).join('');
+}
+
+function openLightbox(url){
+  const lb=document.createElement('div');lb.className='lightbox';lb.onclick=()=>lb.remove();
+  lb.innerHTML=`<img src="${esc(url)}"/>`;document.body.appendChild(lb);
+}
+
+function addLinkField(){pendingLinks.push({label:'',url:''});renderLinksList()}
+function removeLink(i){pendingLinks.splice(i,1);renderLinksList()}
+function closeBg(e){if(e.target===e.currentTarget)closeModal()}
+function closeModal(){document.getElementById('modal-slot').innerHTML='';editingId=null;pendingLinks=[]}
+
+function renderUpdatesList(){
+  const log=document.getElementById('updates-log');if(!log)return;
+  const updates=taskUpdates[editingId]||[];
+  if(!updates.length){log.innerHTML='<div style="font-size:12px;color:var(--muted2);padding:8px 0 4px">Nenhuma atualização ainda.</div>';return}
+  log.innerHTML=[...updates].reverse().map(u=>`
+    <div class="update-item">
+      <div class="update-dot"></div>
+      <div class="update-text">${esc(u.text)}</div>
+      <div class="update-time">${fmtDT(u.created_at)}</div>
+      <button class="update-delete" onclick="deleteUpdate('${u.id}')">×</button>
+    </div>`).join('');
+}
+
+async function addUpdate(){
+  const input=document.getElementById('new-update');
+  const text=input.value.trim();if(!text||!editingId)return;
+  const saved=await api('POST','task_updates',{task_id:editingId,text});
+  const u=Array.isArray(saved)?saved[0]:saved;
+  if(!taskUpdates[editingId])taskUpdates[editingId]=[];
+  taskUpdates[editingId].push(u);input.value='';
+  renderUpdatesList();render();
+}
+
+async function deleteUpdate(uid){
+  await api('DELETE','task_updates?id=eq.'+uid);
+  if(taskUpdates[editingId])taskUpdates[editingId]=taskUpdates[editingId].filter(u=>u.id!==uid);
+  renderUpdatesList();render();
+}
+
+async function saveTask(){
+  const title=document.getElementById('m-title').value.trim();
+  const area=document.getElementById('m-area').value;
+  if(!title){alert('Coloca um título na tarefa.');return}
+  if(!area){alert('Seleciona uma área.');return}
+  const payload={title,area,
+    person:document.getElementById('m-person').value||null,
+    stage:document.getElementById('m-stage').value||'idea',
+    start_date:document.getElementById('m-start').value||null,
+    due_date:document.getElementById('m-date').value||null,
+    description:document.getElementById('m-desc').value.trim()||null
+  };
+  try{
+    let taskId=editingId;
+    if(editingId){
+      await api('PATCH','tasks?id=eq.'+editingId,payload);
+      const idx=tasks.findIndex(x=>x.id===editingId);
+      if(idx>=0)tasks[idx]={...tasks[idx],...payload};
+    }else{
+      const result=await api('POST','tasks',payload);
+      const newTask=Array.isArray(result)?result[0]:result;
+      taskId=newTask.id;tasks.unshift(newTask);
+    }
+    await api('DELETE','task_links?task_id=eq.'+taskId);
+    taskLinks[taskId]=[];
+    for(const l of pendingLinks.filter(l=>l.url.trim())){
+      const saved=await api('POST','task_links',{task_id:taskId,label:l.label||null,url:l.url.trim()});
+      taskLinks[taskId].push(Array.isArray(saved)?saved[0]:saved);
+    }
+    closeModal();render();
+  }catch(e){alert('Erro ao salvar: '+e.message)}
+}
+
+async function deleteTask(id){
+  if(!confirm('Excluir essa tarefa?'))return;
+  await api('DELETE','tasks?id=eq.'+id);
+  tasks=tasks.filter(x=>x.id!==id);delete taskLinks[id];delete taskUpdates[id];
+  closeModal();render();
+}
+
+function openTeamModal(){
+  document.getElementById('modal-slot').innerHTML=`
+    <div class="modal-bg" onclick="closeBg(event)">
+      <div class="modal" style="max-width:400px">
+        <div class="modal-header"><div class="modal-title">Equipe</div><button class="modal-close" onclick="closeModal()">×</button></div>
+        <div id="team-list"></div>
+        <div class="form-row" style="margin-top:16px"><label>Adicionar pessoa</label>
+          <div style="display:flex;gap:8px">
+            <input id="new-member" placeholder="Nome..." style="flex:1" onkeydown="if(event.key==='Enter')addMember()"/>
+            <button class="btn btn-red" onclick="addMember()">Adicionar</button>
+          </div>
+        </div>
+        <div class="modal-actions"><button class="btn" onclick="closeModal()">Fechar</button></div>
+      </div>
+    </div>`;
+  renderTeamList();
+}
+function renderTeamList(){
+  const el=document.getElementById('team-list');if(!el)return;
+  el.innerHTML=team.map(p=>`<div class="team-member-row">
+    <div class="team-member-name"><div class="avatar">${p.charAt(0).toUpperCase()}</div>${esc(p)}</div>
+    <button class="btn btn-delete" style="padding:5px 12px;font-size:12px" onclick="removeMember('${esc(p)}')">Remover</button>
+  </div>`).join('');
+}
+async function addMember(){
+  const v=document.getElementById('new-member').value.trim();
+  if(!v||team.includes(v))return;
+  await api('POST','team_members',{name:v});team.push(v);
+  document.getElementById('new-member').value='';renderTeamList();render();
+}
+async function removeMember(name){
+  if(!confirm('Remover '+name+'?'))return;
+  await api('DELETE','team_members?name=eq.'+encodeURIComponent(name));
+  team=team.filter(p=>p!==name);renderTeamList();render();
+}
+
+function openAreasModal(){
+  document.getElementById('modal-slot').innerHTML=`
+    <div class="modal-bg" onclick="closeBg(event)">
+      <div class="modal" style="max-width:400px">
+        <div class="modal-header"><div class="modal-title">Áreas</div><button class="modal-close" onclick="closeModal()">×</button></div>
+        <div id="areas-list"></div>
+        <div class="form-row" style="margin-top:16px"><label>Adicionar área</label>
+          <div style="display:flex;gap:8px">
+            <input id="new-area" placeholder="Nome da área..." style="flex:1" onkeydown="if(event.key==='Enter')addArea()"/>
+            <button class="btn btn-red" onclick="addArea()">Adicionar</button>
+          </div>
+        </div>
+        <div class="modal-actions"><button class="btn" onclick="closeModal()">Fechar</button></div>
+      </div>
+    </div>`;
+  renderAreasList();
+}
+function renderAreasList(){
+  const el=document.getElementById('areas-list');if(!el)return;
+  el.innerHTML=AREAS.map(a=>`<div class="team-member-row">
+    <div class="team-member-name"><div class="avatar" style="font-size:9px">${esc(a.substring(0,3).toUpperCase())}</div>${esc(a)}</div>
+    <button class="btn btn-delete" style="padding:5px 12px;font-size:12px" onclick="removeArea('${esc(a)}')">Remover</button>
+  </div>`).join('');
+}
+async function addArea(){
+  const v=document.getElementById('new-area').value.trim();
+  if(!v||AREAS.includes(v))return;
+  await api('POST','areas',{name:v});AREAS.push(v);AREAS.sort((a,b)=>a.localeCompare(b));
+  document.getElementById('new-area').value='';renderAreasList();render();
+}
+async function removeArea(name){
+  if(!confirm('Remover área "'+name+'"?'))return;
+  await api('DELETE','areas?name=eq.'+encodeURIComponent(name));
+  AREAS=AREAS.filter(a=>a!==name);renderAreasList();render();
+}
+
+if(isAuthValid()){
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+  loadAll();
+}
+</script>
+</body>
+</html>
