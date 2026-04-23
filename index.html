@@ -56,7 +56,7 @@
     .app-body{display:flex;align-items:flex-start;min-height:calc(100vh - 56px)}
 
     /* CALENDAR SIDEBAR */
-    .cal-sidebar{width:210px;flex-shrink:0;background:var(--navy2);border-right:0.5px solid var(--border);padding:16px 12px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;display:flex;flex-direction:column;gap:20px}
+    .cal-sidebar{width:210px;flex-shrink:0;background:var(--navy2);border-left:0.5px solid var(--border);padding:16px 12px;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;display:flex;flex-direction:column;gap:20px}
     .mini-cal{}
     .cal-header{display:flex;align-items:center;gap:6px;margin-bottom:10px}
     .cal-month{font-size:12px;font-weight:500;color:var(--white);letter-spacing:.05em;flex:1;text-align:center}
@@ -239,22 +239,6 @@
   </div>
 
   <div class="app-body">
-    <!-- CALENDAR SIDEBAR -->
-    <div class="cal-sidebar">
-      <div class="mini-cal">
-        <div class="cal-header">
-          <button class="cal-nav" onclick="calPrev()">‹</button>
-          <span class="cal-month" id="cal-month-label"></span>
-          <button class="cal-nav" onclick="calNext()">›</button>
-        </div>
-        <div class="cal-grid" id="cal-grid"></div>
-      </div>
-      <div>
-        <div class="cal-upcoming-title">Próximos prazos</div>
-        <div class="cal-upcoming-list" id="cal-upcoming-list"></div>
-      </div>
-    </div>
-
     <!-- MAIN -->
     <div class="main-content">
       <!-- TABS -->
@@ -273,6 +257,23 @@
         </div>
       </div>
     </div>
+
+    <!-- CALENDAR SIDEBAR -->
+    <div class="cal-sidebar">
+      <div class="mini-cal">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="calPrev()">‹</button>
+          <span class="cal-month" id="cal-month-label"></span>
+          <button class="cal-nav" onclick="calNext()">›</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+      <div>
+        <div class="cal-upcoming-title">Próximos prazos</div>
+        <div class="cal-upcoming-list" id="cal-upcoming-list"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
