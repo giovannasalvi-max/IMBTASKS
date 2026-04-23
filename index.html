@@ -426,9 +426,9 @@ function render(){
     if(fp&&t.person!==fp)return false;
     return true;
   });
-  else if(fs==='today'){const td=new Date().toISOString().split('T')[0];filtered=filtered.filter(t=>t.due_date===td);}
   if(fs==='date')filtered.sort((a,b)=>(a.due_date||'9999')>(b.due_date||'9999')?1:-1);
   else if(fs==='area')filtered.sort((a,b)=>(a.area||'').localeCompare(b.area||''));
+  else if(fs==='today'){const td=new Date().toISOString().split('T')[0];filtered=filtered.filter(t=>t.due_date===td);}
 
   const stages=[
     {stage:'idea',label:'Ideias para validar',color:'var(--idea)'},
