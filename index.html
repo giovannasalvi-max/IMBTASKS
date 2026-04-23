@@ -83,10 +83,10 @@
     .main-content{flex:1;min-width:0;display:flex;flex-direction:column}
 
     /* TABS */
-    .tabs-bar{padding:0 20px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:0}
-    .tab{font-family:var(--font-body);font-size:13px;font-weight:400;padding:12px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;margin-bottom:-1px}
-    .tab:hover{color:var(--white)}
-    .tab.active{color:var(--white);font-weight:500;border-bottom-color:var(--red)}
+    .tabs-bar{padding:12px 20px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:8px}
+    .tab{font-family:var(--font-body);font-size:13px;font-weight:400;padding:8px 18px;border:0.5px solid var(--border2);border-radius:8px;background:rgba(255,255,255,0.04);color:var(--muted);cursor:pointer;transition:color .15s,background .15s,border-color .15s}
+    .tab:hover{color:var(--white);background:rgba(255,255,255,0.08);border-color:var(--border2)}
+    .tab.active{color:var(--white);font-weight:500;background:var(--red);border-color:var(--red)}
 
     /* FILTERS */
     .filters-bar{padding:12px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:0.5px solid var(--border)}
@@ -428,7 +428,7 @@ function render(){
   });
   if(fs==='date')filtered.sort((a,b)=>(a.due_date||'9999')>(b.due_date||'9999')?1:-1);
   else if(fs==='area')filtered.sort((a,b)=>(a.area||'').localeCompare(b.area||''));
-  else if(fs==='today'){const td=new Date().toISOString().split('T')[0];filtered=filtered.filter(t=>t.due_date===td);}
+  else if(fs==='today'){const td=new Date().toISOString().split('T')[0];filtered=filtered.filter(tk=>tk.due_date===td);}
 
   const stages=[
     {stage:'idea',label:'Ideias para validar',color:'var(--idea)'},
