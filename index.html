@@ -374,6 +374,7 @@ function renderFilters(){
       <select id="f-sort" onchange="render()">
         <option value="created">Mais recentes</option>
         <option value="date">Por prazo</option>
+        <option value="today">Hoje</option>
         <option value="area">Por área</option>
       </select>
       <div class="filter-sep"></div>
@@ -387,6 +388,7 @@ function renderFilters(){
       <select id="f-sort" onchange="render()">
         <option value="created">Mais recentes</option>
         <option value="date">Por prazo</option>
+        <option value="today">Hoje</option>
       </select>
       <div class="filter-sep"></div>
       <div class="stats-pills" id="stats-pills"></div>`;
@@ -424,6 +426,7 @@ function render(){
     if(fp&&t.person!==fp)return false;
     return true;
   });
+  else if(fs==='today'){const td=new Date().toISOString().split('T')[0];filtered=filtered.filter(t=>t.due_date===td);}
   if(fs==='date')filtered.sort((a,b)=>(a.due_date||'9999')>(b.due_date||'9999')?1:-1);
   else if(fs==='area')filtered.sort((a,b)=>(a.area||'').localeCompare(b.area||''));
 
