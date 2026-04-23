@@ -534,10 +534,11 @@ function renderCalendar(){
       taskDates[t.due_date].push(t);
     }
   });
+  const eventDates={};
   eventCal.forEach(ev=>{
     if(ev.event_date&&ev.status!=='cancelado'){
-      if(!taskDates[ev.event_date])taskDates[ev.event_date]=[];
-      taskDates[ev.event_date].push({title:'★ '+ev.name,due_date:ev.event_date});
+      if(!eventDates[ev.event_date])eventDates[ev.event_date]=[];
+      eventDates[ev.event_date].push(ev);
     }
   });
 
@@ -560,8 +561,15 @@ function renderCalendar(){
     let cls='cal-day';
     if(isToday)cls+=' today';
     if(hasTasks)cls+=' has-task';
-    html+=`<div class="${cls}" title="${hasTasks?taskDates[dateStr].map(t=>t.title).join(', '):''}">
-      <span>${d}</span>${hasTasks?'<div class="cal-dot"></div>':''}
+    const hasEvents=eventDates[dateStr]&&eventDates[dateStr].length>0;
+    if(hasEvents)cls+=' has-task';
+    const title=[...(taskDates[dateStr]||[]).map(t=>t.title),...(eventDates[dateStr]||[]).map(e=>'★ '+e.name)].join(', ');
+    html+=`<div class="${cls}" title="${title}">
+      <span>${d}</span>
+      <div style="display:flex;gap:2px;position:absolute;bottom:2px">
+        ${hasTasks?'<div class="cal-dot"></div>':''}
+        ${hasEvents?'<div class="cal-dot" style="background:var(--red)"></div>':''}
+      </div>
     </div>`;
   }
 
