@@ -245,6 +245,7 @@
       <div class="tabs-bar">
         <button class="tab active" onclick="switchTab('imb')" id="tab-imb">IMB Tasks</button>
         <button class="tab" onclick="switchTab('outros')" id="tab-outros">Outros Eventos</button>
+        <button class="tab" onclick="switchTab('datas')" id="tab-datas">Datas dos Eventos</button>
       </div>
 
       <!-- FILTERS -->
@@ -285,7 +286,7 @@ const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const APP_PASSWORD='imb2026';
 const BUCKET='task-photos';
 
-let AREAS=[],EVENTS=[],ACTIONS=[],tasks=[],team=[],taskLinks={},taskUpdates={};
+let AREAS=[],EVENTS=[],ACTIONS=[],tasks=[],team=[],taskLinks={},taskUpdates={},eventCal=[];
 let editingId=null,pendingLinks=[];
 let currentTab='imb';
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
@@ -319,19 +320,21 @@ function doLogin(){
 function logout(){localStorage.removeItem('imb_auth');location.reload()}
 
 async function loadAll(){
-  const[t,tm,tl,tu,ar,ev,ac]=await Promise.all([
+  const[t,tm,tl,tu,ar,ev,ac,ec]=await Promise.all([
     api('GET','tasks?order=created_at.desc&select=*'),
     api('GET','team_members?order=name.asc'),
     api('GET','task_links?select=*'),
     api('GET','task_updates?order=created_at.asc&select=*'),
     api('GET','areas?order=name.asc'),
     api('GET','events?order=name.asc'),
-    api('GET','actions?order=name.asc')
+    api('GET','actions?order=name.asc'),
+    api('GET','event_calendar?order=event_date.asc')
   ]);
   tasks=t||[];team=(tm||[]).map(x=>x.name);
   AREAS=(ar||[]).map(x=>x.name);
   EVENTS=(ev||[]).map(x=>x.name);
   ACTIONS=(ac||[]).map(x=>x.name);
+  eventCal=ec||[];
   taskLinks={};(tl||[]).forEach(l=>{if(!taskLinks[l.task_id])taskLinks[l.task_id]=[];taskLinks[l.task_id].push(l)});
   taskUpdates={};(tu||[]).forEach(u=>{if(!taskUpdates[u.task_id])taskUpdates[u.task_id]=[];taskUpdates[u.task_id].push(u)});
   renderCalendar();renderTopbar();renderFilters();render();
@@ -342,12 +345,20 @@ function switchTab(tab){
   currentTab=tab;
   document.getElementById('tab-imb').classList.toggle('active',tab==='imb');
   document.getElementById('tab-outros').classList.toggle('active',tab==='outros');
-  renderTopbar();renderFilters();render();
+  document.getElementById('tab-datas').classList.toggle('active',tab==='datas');
+  if(tab==='datas'){renderTopbar();renderDatas();}
+  else{renderTopbar();renderFilters();render();}
 }
 
 /* ---- TOPBAR ---- */
 function renderTopbar(){
   const el=document.getElementById('topbar-actions');
+  if(currentTab==='datas'){
+    el.innerHTML=`
+      <button class="btn btn-red" onclick="openEventCalModal(null)">+ Evento</button>
+      <button class="btn btn-ghost" onclick="logout()">Sair</button>`;
+    return;
+  }
   if(currentTab==='imb'){
     el.innerHTML=`
       <button class="btn" onclick="openAreasModal()">Áreas</button>
@@ -367,6 +378,7 @@ function renderTopbar(){
 /* ---- FILTERS ---- */
 function renderFilters(){
   const el=document.getElementById('filters-bar');
+  if(currentTab==='datas'){el.innerHTML='';return;}
   if(currentTab==='imb'){
     el.innerHTML=`
       <select id="f-area" onchange="render()"><option value="">Todas as áreas</option></select>
@@ -409,6 +421,8 @@ function populateSelect(id,items){
 
 /* ---- RENDER BOARD ---- */
 function render(){
+  const b=document.getElementById('board');
+  b.style.gridTemplateColumns='';b.style.minWidth='';
   const board=currentTab==='imb';
   const fa=board?(document.getElementById('f-area')?.value||''):'';
   const fe=!board?(document.getElementById('f-event')?.value||''):'';
@@ -518,6 +532,12 @@ function renderCalendar(){
     if(t.due_date&&t.stage!=='done'){
       if(!taskDates[t.due_date])taskDates[t.due_date]=[];
       taskDates[t.due_date].push(t);
+    }
+  });
+  eventCal.forEach(ev=>{
+    if(ev.event_date&&ev.status!=='cancelado'){
+      if(!taskDates[ev.event_date])taskDates[ev.event_date]=[];
+      taskDates[ev.event_date].push({title:'★ '+ev.name,due_date:ev.event_date});
     }
   });
 
@@ -915,6 +935,116 @@ async function removeAction(name){
   if(!confirm('Remover ação "'+name+'"?'))return;
   await api('DELETE','actions?name=eq.'+encodeURIComponent(name));
   ACTIONS=ACTIONS.filter(a=>a!==name);renderActionsList();renderFilters();
+}
+
+/* ---- EVENT CALENDAR ---- */
+function renderDatas(){
+  document.getElementById('filters-bar').innerHTML='';
+  const statusColor={confirmado:'var(--done)',negociacao:'var(--doing)',cancelado:'#f0727f'};
+  const statusLabel={confirmado:'Confirmado','em negociação':'Em negociação',cancelado:'Cancelado'};
+  const sorted=[...eventCal].sort((a,b)=>a.event_date>b.event_date?1:-1);
+  const today=new Date().toISOString().split('T')[0];
+  const board=document.getElementById('board');
+  board.style.display='block';
+  board.style.gridTemplateColumns='1fr';
+  board.style.minWidth='0';
+  if(!sorted.length){
+    board.innerHTML='<div class="empty-col" style="padding:40px;text-align:center;color:var(--muted2)">Nenhum evento cadastrado ainda.</div>';
+    return;
+  }
+  board.innerHTML=sorted.map(ev=>{
+    const past=ev.event_date<today;
+    const sc=statusColor[ev.status]||'var(--todo)';
+    const sl=statusLabel[ev.status]||ev.status;
+    return`<div class="card" style="max-width:600px;opacity:${past?'.5':'1'}" onclick="openEventCalModal('${ev.id}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:15px;font-weight:500;color:var(--white)">${esc(ev.name)}</div>
+        <span class="badge" style="background:${sc}22;color:${sc};border:0.5px solid ${sc}44">${sl}</span>
+      </div>
+      <div style="display:flex;gap:16px;margin-bottom:${ev.description?'8px':'0'}">
+        <span style="font-size:12px;color:var(--doing)">${fmtDateFull(ev.event_date)}</span>
+        ${ev.location?`<span style="font-size:12px;color:var(--muted2)">${esc(ev.location)}</span>`:''}
+      </div>
+      ${ev.description?`<div style="font-size:12px;color:var(--muted);line-height:1.5">${esc(ev.description)}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function fmtDateFull(d){
+  if(!d)return'';
+  const[y,m,day]=d.split('-');
+  const months=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return`${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
+}
+
+function openEventCalModal(id){
+  const ev=id?(eventCal.find(x=>x.id===id)||{}):{};
+  document.getElementById('modal-slot').innerHTML=`
+    <div class="modal-bg" onclick="closeBg(event)">
+      <div class="modal" style="max-width:480px">
+        <div class="modal-header">
+          <div class="modal-title">${id?'Editar evento':'Novo evento'}</div>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="form-row"><label>Nome do evento</label>
+          <input id="ec-name" value="${esc(ev.name||'')}" placeholder="Ex: Innovation Conference 2026"/>
+        </div>
+        <div class="form-grid">
+          <div class="form-row"><label>Data</label>
+            <input type="date" id="ec-date" value="${ev.event_date||''}"/>
+          </div>
+          <div class="form-row"><label>Cidade / Estado</label>
+            <input id="ec-location" value="${esc(ev.location||'')}" placeholder="Ex: São Paulo, SP"/>
+          </div>
+        </div>
+        <div class="form-row"><label>Status</label>
+          <select id="ec-status">
+            <option value="confirmado"${ev.status==='confirmado'||!ev.status?' selected':''}>Confirmado</option>
+            <option value="em negociação"${ev.status==='em negociação'?' selected':''}>Em negociação</option>
+            <option value="cancelado"${ev.status==='cancelado'?' selected':''}>Cancelado</option>
+          </select>
+        </div>
+        <div class="form-row"><label>Descrição</label>
+          <textarea id="ec-desc" placeholder="Detalhes do evento...">${esc(ev.description||'')}</textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-red" onclick="saveEventCal('${id||''}')">Salvar</button>
+          <button class="btn" onclick="closeModal()">Cancelar</button>
+          ${id?`<button class="btn btn-delete" onclick="deleteEventCal('${id}')">Excluir</button>`:''}
+        </div>
+      </div>
+    </div>`;
+}
+
+async function saveEventCal(id){
+  const name=document.getElementById('ec-name').value.trim();
+  const event_date=document.getElementById('ec-date').value;
+  if(!name){alert('Coloca o nome do evento.');return}
+  if(!event_date){alert('Coloca a data do evento.');return}
+  const payload={name,event_date,
+    location:document.getElementById('ec-location').value.trim()||null,
+    status:document.getElementById('ec-status').value,
+    description:document.getElementById('ec-desc').value.trim()||null
+  };
+  try{
+    if(id){
+      await api('PATCH','event_calendar?id=eq.'+id,payload);
+      const idx=eventCal.findIndex(x=>x.id===id);
+      if(idx>=0)eventCal[idx]={...eventCal[idx],...payload};
+    }else{
+      const result=await api('POST','event_calendar',payload);
+      const newEv=Array.isArray(result)?result[0]:result;
+      eventCal.push(newEv);
+    }
+    closeModal();renderDatas();renderCalendar();
+  }catch(e){alert('Erro ao salvar: '+e.message)}
+}
+
+async function deleteEventCal(id){
+  if(!confirm('Excluir esse evento?'))return;
+  await api('DELETE','event_calendar?id=eq.'+id);
+  eventCal=eventCal.filter(x=>x.id!==id);
+  closeModal();renderDatas();renderCalendar();
 }
 
 /* ---- INIT ---- */
