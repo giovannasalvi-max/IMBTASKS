@@ -52,6 +52,36 @@
     .btn-delete{background:none;border:0.5px solid rgba(200,16,46,0.3);color:#f0727f}
     .btn-delete:hover{background:rgba(200,16,46,0.1)}
 
+    /* CALENDAR */
+    .calendar-bar{background:var(--navy2);border-bottom:0.5px solid var(--border);padding:12px 28px;display:flex;align-items:flex-start;gap:24px}
+    .mini-cal{flex-shrink:0}
+    .cal-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .cal-month{font-size:12px;font-weight:500;color:var(--white);letter-spacing:.05em}
+    .cal-nav{background:none;border:none;color:var(--muted);cursor:pointer;padding:2px 6px;font-size:14px;border-radius:4px;transition:color .15s}
+    .cal-nav:hover{color:var(--white)}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,28px);gap:2px}
+    .cal-dow{font-size:10px;color:var(--muted2);text-align:center;padding:2px 0;font-weight:500}
+    .cal-day{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);cursor:default;position:relative;flex-direction:column;gap:1px}
+    .cal-day.today{background:var(--red);color:var(--white);font-weight:500}
+    .cal-day.has-task{color:var(--white)}
+    .cal-day.other-month{opacity:.3}
+    .cal-dot{width:4px;height:4px;border-radius:50%;background:var(--doing);position:absolute;bottom:3px}
+    .cal-day.today .cal-dot{background:rgba(255,255,255,0.7)}
+    .cal-upcoming{flex:1;min-width:0}
+    .cal-upcoming-title{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .cal-upcoming-list{display:flex;flex-wrap:wrap;gap:6px}
+    .cal-task-chip{font-size:11px;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.05);border:0.5px solid var(--border2);color:var(--white);display:flex;align-items:center;gap:6px;cursor:pointer;transition:background .15s}
+    .cal-task-chip:hover{background:var(--card-hover)}
+    .cal-task-chip .chip-date{color:var(--muted2);font-size:10px}
+    .cal-task-chip .chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .no-upcoming{font-size:12px;color:var(--muted2)}
+
+    /* TABS */
+    .tabs-bar{padding:0 28px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:0}
+    .tab{font-family:var(--font-body);font-size:13px;font-weight:400;padding:12px 20px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;margin-bottom:-1px}
+    .tab:hover{color:var(--white)}
+    .tab.active{color:var(--white);font-weight:500;border-bottom-color:var(--red)}
+
     /* FILTERS */
     .filters-bar{padding:14px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:0.5px solid var(--border)}
     .filters-bar select{font-family:var(--font-body);font-size:13px;padding:7px 12px;border-radius:7px;border:0.5px solid var(--border2);background:var(--card-bg);color:var(--white);outline:none;cursor:pointer}
@@ -91,6 +121,8 @@
     .card-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
     .badge{font-size:11px;padding:2px 8px;border-radius:20px;white-space:nowrap}
     .badge-area{background:rgba(200,16,46,0.15);color:#f0727f;border:0.5px solid rgba(200,16,46,0.25)}
+    .badge-event{background:rgba(79,163,224,0.15);color:#4fa3e0;border:0.5px solid rgba(79,163,224,0.25)}
+    .badge-action{background:rgba(76,175,125,0.15);color:#4caf7d;border:0.5px solid rgba(76,175,125,0.25)}
     .badge-person{background:rgba(255,255,255,0.07);color:var(--muted);border:0.5px solid var(--border)}
     .card-last-update{font-size:11px;color:var(--muted2);margin-top:7px;line-height:1.4;font-style:italic;border-top:0.5px solid var(--border);padding-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .card-links-preview{margin-top:7px;display:flex;gap:5px;flex-wrap:wrap}
@@ -159,10 +191,8 @@
     .add-link-btn{font-size:12px;color:var(--muted);background:none;border:0.5px dashed var(--border2);border-radius:7px;padding:7px 14px;cursor:pointer;width:100%;font-family:var(--font-body);transition:border-color .15s,color .15s;margin-top:4px}
     .add-link-btn:hover{border-color:rgba(200,16,46,0.4);color:var(--white)}
 
-    /* LIGHTBOX */
     .lightbox{position:fixed;inset:0;background:rgba(5,12,20,0.95);display:flex;align-items:center;justify-content:center;z-index:300;cursor:pointer}
     .lightbox img{max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain}
-
     .modal-actions{display:flex;gap:8px;margin-top:18px;padding-top:16px;border-top:0.5px solid var(--border);flex-wrap:wrap}
     .team-member-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)}
     .team-member-row:last-child{border-bottom:none}
@@ -177,6 +207,7 @@
     @media(max-width:768px){
       .topbar{padding:0 16px}.filters-bar{padding:12px 16px}.board-wrap{padding:14px 16px}
       .stats-pills{display:none}.form-grid,.form-grid3{grid-template-columns:1fr}
+      .calendar-bar{flex-direction:column}.tabs-bar{padding:0 16px}
     }
   </style>
 </head>
@@ -188,7 +219,7 @@
     <div class="login-title">Tasks <em>2026</em></div>
     <div class="login-sub">Gestão de produção do evento</div>
     <div class="login-field">
-      <input type="password" id="pw-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()" />
+      <input type="password" id="pw-input" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')doLogin()"/>
     </div>
     <button class="login-btn" onclick="doLogin()">Entrar</button>
     <div class="login-error" id="login-error">Senha incorreta. Tente novamente.</div>
@@ -198,24 +229,35 @@
 <div id="app-screen">
   <div class="topbar">
     <div class="topbar-brand"><div class="topbar-dot"></div>IMB <span>Tasks</span></div>
-    <div class="topbar-right">
-      <button class="btn" onclick="openAreasModal()">Áreas</button>
-      <button class="btn" onclick="openTeamModal()">Equipe</button>
-      <button class="btn btn-red" onclick="openModal(null)">+ Nova tarefa</button>
-      <button class="btn btn-ghost" onclick="logout()">Sair</button>
+    <div class="topbar-right" id="topbar-actions"></div>
+  </div>
+
+  <!-- MINI CALENDAR -->
+  <div class="calendar-bar">
+    <div class="mini-cal">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="calPrev()">‹</button>
+        <span class="cal-month" id="cal-month-label"></span>
+        <button class="cal-nav" onclick="calNext()">›</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div class="cal-upcoming">
+      <div class="cal-upcoming-title">Próximos prazos</div>
+      <div class="cal-upcoming-list" id="cal-upcoming-list"></div>
     </div>
   </div>
-  <div class="filters-bar">
-    <select id="f-area" onchange="render()"><option value="">Todas as áreas</option></select>
-    <select id="f-person" onchange="render()"><option value="">Toda a equipe</option></select>
-    <select id="f-sort" onchange="render()">
-      <option value="created">Mais recentes</option>
-      <option value="date">Por prazo</option>
-      <option value="area">Por área</option>
-    </select>
-    <div class="filter-sep"></div>
-    <div class="stats-pills" id="stats-pills"></div>
+
+  <!-- TABS -->
+  <div class="tabs-bar">
+    <button class="tab active" onclick="switchTab('imb')" id="tab-imb">IMB Tasks</button>
+    <button class="tab" onclick="switchTab('outros')" id="tab-outros">Outros Eventos</button>
   </div>
+
+  <!-- FILTERS -->
+  <div class="filters-bar" id="filters-bar"></div>
+
+  <!-- BOARD -->
   <div class="board-wrap">
     <div class="board" id="board">
       <div class="loading" style="grid-column:1/-1"><div class="spinner"></div> Carregando...</div>
@@ -231,31 +273,28 @@ const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const APP_PASSWORD='imb2026';
 const BUCKET='task-photos';
 
-let AREAS=[],tasks=[],team=[],taskLinks={},taskUpdates={};
+let AREAS=[],EVENTS=[],ACTIONS=[],tasks=[],team=[],taskLinks={},taskUpdates={};
 let editingId=null,pendingLinks=[];
+let currentTab='imb';
+let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 
 function hdrs(){return{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'}}
-
 async function api(method,path,body){
   const res=await fetch(SUPA_URL+'/rest/v1/'+path,{method,headers:hdrs(),body:body?JSON.stringify(body):undefined});
   if(!res.ok)throw new Error(await res.text());
   const t=await res.text();return t?JSON.parse(t):null;
 }
-
 async function uploadFile(file){
   const ext=file.name.split('.').pop();
   const name=Date.now()+'-'+Math.random().toString(36).slice(2)+'.'+ext;
   const res=await fetch(SUPA_URL+'/storage/v1/object/'+BUCKET+'/'+name,{
-    method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type,'x-upsert':'false'},
-    body:file
+    method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type,'x-upsert':'false'},body:file
   });
   if(!res.ok)throw new Error('Upload falhou: '+await res.text());
   return SUPA_URL+'/storage/v1/object/public/'+BUCKET+'/'+name;
 }
 
 function isAuthValid(){const ts=localStorage.getItem('imb_auth');if(!ts)return false;return(Date.now()-parseInt(ts))<86400000}
-
 function doLogin(){
   const pw=document.getElementById('pw-input').value;
   if(pw===APP_PASSWORD){
@@ -263,50 +302,119 @@ function doLogin(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app-screen').style.display='block';
     loadAll();
-  }else{
-    document.getElementById('login-error').style.display='block';
-    document.getElementById('pw-input').value='';
-  }
+  }else{document.getElementById('login-error').style.display='block';document.getElementById('pw-input').value=''}
 }
-
 function logout(){localStorage.removeItem('imb_auth');location.reload()}
 
 async function loadAll(){
-  const[t,tm,tl,tu,ar]=await Promise.all([
+  const[t,tm,tl,tu,ar,ev,ac]=await Promise.all([
     api('GET','tasks?order=created_at.desc&select=*'),
     api('GET','team_members?order=name.asc'),
     api('GET','task_links?select=*'),
     api('GET','task_updates?order=created_at.asc&select=*'),
-    api('GET','areas?order=name.asc')
+    api('GET','areas?order=name.asc'),
+    api('GET','events?order=name.asc'),
+    api('GET','actions?order=name.asc')
   ]);
-  tasks=t||[];team=(tm||[]).map(x=>x.name);AREAS=(ar||[]).map(x=>x.name);
+  tasks=t||[];team=(tm||[]).map(x=>x.name);
+  AREAS=(ar||[]).map(x=>x.name);
+  EVENTS=(ev||[]).map(x=>x.name);
+  ACTIONS=(ac||[]).map(x=>x.name);
   taskLinks={};(tl||[]).forEach(l=>{if(!taskLinks[l.task_id])taskLinks[l.task_id]=[];taskLinks[l.task_id].push(l)});
   taskUpdates={};(tu||[]).forEach(u=>{if(!taskUpdates[u.task_id])taskUpdates[u.task_id]=[];taskUpdates[u.task_id].push(u)});
-  render();
+  renderCalendar();renderTopbar();renderFilters();render();
 }
 
-function populateAreaFilter(){
-  const sel=document.getElementById('f-area'),cur=sel.value;
-  sel.innerHTML='<option value="">Todas as áreas</option>';
-  AREAS.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o)});
+/* ---- TABS ---- */
+function switchTab(tab){
+  currentTab=tab;
+  document.getElementById('tab-imb').classList.toggle('active',tab==='imb');
+  document.getElementById('tab-outros').classList.toggle('active',tab==='outros');
+  renderTopbar();renderFilters();render();
+}
+
+/* ---- TOPBAR ---- */
+function renderTopbar(){
+  const el=document.getElementById('topbar-actions');
+  if(currentTab==='imb'){
+    el.innerHTML=`
+      <button class="btn" onclick="openAreasModal()">Áreas</button>
+      <button class="btn" onclick="openTeamModal()">Equipe</button>
+      <button class="btn btn-red" onclick="openModal(null)">+ Nova tarefa</button>
+      <button class="btn btn-ghost" onclick="logout()">Sair</button>`;
+  }else{
+    el.innerHTML=`
+      <button class="btn" onclick="openEventsModal()">Eventos</button>
+      <button class="btn" onclick="openActionsModal()">Ações</button>
+      <button class="btn" onclick="openTeamModal()">Equipe</button>
+      <button class="btn btn-red" onclick="openModal(null)">+ Nova tarefa</button>
+      <button class="btn btn-ghost" onclick="logout()">Sair</button>`;
+  }
+}
+
+/* ---- FILTERS ---- */
+function renderFilters(){
+  const el=document.getElementById('filters-bar');
+  if(currentTab==='imb'){
+    el.innerHTML=`
+      <select id="f-area" onchange="render()"><option value="">Todas as áreas</option></select>
+      <select id="f-person" onchange="render()"><option value="">Toda a equipe</option></select>
+      <select id="f-sort" onchange="render()">
+        <option value="created">Mais recentes</option>
+        <option value="date">Por prazo</option>
+        <option value="area">Por área</option>
+      </select>
+      <div class="filter-sep"></div>
+      <div class="stats-pills" id="stats-pills"></div>`;
+    populateSelect('f-area',AREAS);
+  }else{
+    el.innerHTML=`
+      <select id="f-event" onchange="render()"><option value="">Todos os eventos</option></select>
+      <select id="f-action" onchange="render()"><option value="">Todas as ações</option></select>
+      <select id="f-person" onchange="render()"><option value="">Toda a equipe</option></select>
+      <select id="f-sort" onchange="render()">
+        <option value="created">Mais recentes</option>
+        <option value="date">Por prazo</option>
+      </select>
+      <div class="filter-sep"></div>
+      <div class="stats-pills" id="stats-pills"></div>`;
+    populateSelect('f-event',EVENTS);
+    populateSelect('f-action',ACTIONS);
+  }
+  populateSelect('f-person',team);
+}
+
+function populateSelect(id,items){
+  const sel=document.getElementById(id);if(!sel)return;
+  const cur=sel.value;
+  const first=sel.options[0].outerHTML;
+  sel.innerHTML=first;
+  items.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o)});
   if(cur)sel.value=cur;
 }
 
-function populateTeamFilter(){
-  const sel=document.getElementById('f-person'),cur=sel.value;
-  sel.innerHTML='<option value="">Toda a equipe</option>';
-  team.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o)});
-  if(cur)sel.value=cur;
-}
-
+/* ---- RENDER BOARD ---- */
 function render(){
-  populateAreaFilter();populateTeamFilter();
-  const fa=document.getElementById('f-area').value;
-  const fp=document.getElementById('f-person').value;
-  const fs=document.getElementById('f-sort').value;
-  let filtered=tasks.filter(t=>(!fa||t.area===fa)&&(!fp||t.person===fp));
+  const board=currentTab==='imb';
+  const fa=board?(document.getElementById('f-area')?.value||''):'';
+  const fe=!board?(document.getElementById('f-event')?.value||''):'';
+  const fac=!board?(document.getElementById('f-action')?.value||''):'';
+  const fp=document.getElementById('f-person')?.value||'';
+  const fs=document.getElementById('f-sort')?.value||'created';
+
+  let filtered=tasks.filter(t=>{
+    const b=t.board||'imb';
+    if(board&&b!=='imb')return false;
+    if(!board&&b!=='outros')return false;
+    if(fa&&t.area!==fa)return false;
+    if(fe&&t.event_name!==fe)return false;
+    if(fac&&t.action_name!==fac)return false;
+    if(fp&&t.person!==fp)return false;
+    return true;
+  });
   if(fs==='date')filtered.sort((a,b)=>(a.due_date||'9999')>(b.due_date||'9999')?1:-1);
   else if(fs==='area')filtered.sort((a,b)=>(a.area||'').localeCompare(b.area||''));
+
   const stages=[
     {stage:'idea',label:'Ideias para validar',color:'var(--idea)'},
     {stage:'todo',label:'A fazer',color:'var(--todo)'},
@@ -315,14 +423,16 @@ function render(){
   ];
   const counts={idea:0,todo:0,doing:0,done:0};
   filtered.forEach(t=>{if(t.stage in counts)counts[t.stage]++});
-  document.getElementById('stats-pills').innerHTML=
+  const sp=document.getElementById('stats-pills');
+  if(sp)sp.innerHTML=
     `<div class="stat-pill"><span class="dot" style="background:var(--idea)"></span>${counts.idea} ideias</div>`+
     `<div class="stat-pill"><span class="dot" style="background:var(--todo)"></span>${counts.todo} a fazer</div>`+
     `<div class="stat-pill"><span class="dot" style="background:var(--doing)"></span>${counts.doing} em curso</div>`+
     `<div class="stat-pill"><span class="dot" style="background:var(--done)"></span>${counts.done} concluídas</div>`;
+
   document.getElementById('board').innerHTML=stages.map(col=>{
     const items=filtered.filter(t=>t.stage===col.stage);
-    return `<div class="col">
+    return`<div class="col">
       <div class="col-head">
         <div class="col-head-left"><div class="col-indicator" style="background:${col.color}"></div><span class="col-label">${col.label}</span></div>
         <span class="col-count">${items.length}</span>
@@ -332,6 +442,7 @@ function render(){
   }).join('');
 }
 
+/* ---- CARD HTML ---- */
 function isImg(u){return/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(u)}
 function isPdf(u){return/\.pdf(\?.*)?$/i.test(u)}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
@@ -347,11 +458,19 @@ function cardHTML(t){
   const last=updates.length?updates[updates.length-1]:null;
   const today=new Date().toISOString().split('T')[0];
   const overdue=t.due_date&&t.due_date<today&&t.stage!=='done';
+  const isImb=(t.board||'imb')==='imb';
+
   const datesHTML=(t.start_date||t.due_date)?`<div class="card-dates">
     ${t.start_date?`<span class="card-date-item">Início ${fmtDate(t.start_date)}</span>`:''}
     ${t.start_date&&t.due_date?`<span class="card-date-sep">→</span>`:''}
     ${t.due_date?`<span class="card-date-item${overdue?' overdue':''}">Prazo ${fmtDate(t.due_date)}</span>`:''}
   </div>`:'';
+
+  const metaBadges=isImb
+    ?`<span class="badge badge-area">${esc(t.area)}</span>`
+    :`${t.event_name?`<span class="badge badge-event">${esc(t.event_name)}</span>`:''}`+
+     `${t.action_name?`<span class="badge badge-action">${esc(t.action_name)}</span>`:''}`;
+
   const linksHTML=links.length?`<div class="card-links-preview">${
     links.slice(0,4).map(l=>{
       if(isImg(l.url))return`<div class="link-thumb"><img src="${esc(l.url)}" loading="lazy"/></div>`;
@@ -359,24 +478,110 @@ function cardHTML(t){
       return`<span class="link-pill">${esc(l.label||'Link')}</span>`;
     }).join('')
   }${links.length>4?`<span class="link-pill">+${links.length-4}</span>`:''}</div>`:'';
+
   const updateHTML=last?`<div class="card-last-update">${esc(last.text)} <span style="font-size:10px;opacity:.7">${fmtDT(last.created_at)}</span></div>`:'';
+
   return`<div class="card ${t.stage}" onclick="openModal('${t.id}')">
     <div class="card-title">${esc(t.title)}</div>
     ${datesHTML}
     <div class="card-meta">
-      <span class="badge badge-area">${esc(t.area)}</span>
+      ${metaBadges}
       ${t.person?`<span class="badge badge-person">${esc(t.person)}</span>`:''}
     </div>
     ${updateHTML}${linksHTML}
   </div>`;
 }
 
+/* ---- CALENDAR ---- */
+function renderCalendar(){
+  const MONTHS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const DOWS=['D','S','T','Q','Q','S','S'];
+  document.getElementById('cal-month-label').textContent=MONTHS[calMonth]+' '+calYear;
+
+  const taskDates={};
+  tasks.forEach(t=>{
+    if(t.due_date&&t.stage!=='done'){
+      if(!taskDates[t.due_date])taskDates[t.due_date]=[];
+      taskDates[t.due_date].push(t);
+    }
+  });
+
+  const today=new Date();
+  const todayStr=today.toISOString().split('T')[0];
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const daysInPrev=new Date(calYear,calMonth,0).getDate();
+
+  let html=DOWS.map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+  for(let i=0;i<firstDay;i++){
+    const day=daysInPrev-firstDay+i+1;
+    html+=`<div class="cal-day other-month"><span>${day}</span></div>`;
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=dateStr===todayStr;
+    const hasTasks=taskDates[dateStr]&&taskDates[dateStr].length>0;
+    let cls='cal-day';
+    if(isToday)cls+=' today';
+    if(hasTasks)cls+=' has-task';
+    html+=`<div class="${cls}" title="${hasTasks?taskDates[dateStr].map(t=>t.title).join(', '):''}">
+      <span>${d}</span>${hasTasks?'<div class="cal-dot"></div>':''}
+    </div>`;
+  }
+
+  const remaining=(7-((firstDay+daysInMonth)%7))%7;
+  for(let i=1;i<=remaining;i++){
+    html+=`<div class="cal-day other-month"><span>${i}</span></div>`;
+  }
+
+  document.getElementById('cal-grid').innerHTML=html;
+
+  // Upcoming tasks
+  const upcoming=tasks
+    .filter(t=>t.due_date&&t.stage!=='done'&&t.due_date>=todayStr)
+    .sort((a,b)=>a.due_date>b.due_date?1:-1)
+    .slice(0,8);
+
+  const stageColor={idea:'var(--idea)',todo:'var(--todo)',doing:'var(--doing)',done:'var(--done)'};
+  const ul=document.getElementById('cal-upcoming-list');
+  if(!upcoming.length){
+    ul.innerHTML='<div class="no-upcoming">Nenhum prazo próximo</div>';
+  }else{
+    ul.innerHTML=upcoming.map(t=>`
+      <div class="cal-task-chip" onclick="openModal('${t.id}');switchTab('${(t.board||'imb')==='imb'?'imb':'outros'}')">
+        <span class="chip-dot" style="background:${stageColor[t.stage]||'var(--todo)'}"></span>
+        <span>${esc(t.title)}</span>
+        <span class="chip-date">${fmtDate(t.due_date)}</span>
+      </div>`).join('');
+  }
+}
+
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--}renderCalendar()}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++}renderCalendar()}
+
+/* ---- MODAL ---- */
 function openModal(id){
   editingId=id;
   const t=id?(tasks.find(x=>x.id===id)||{}):{};
   pendingLinks=id?[...(taskLinks[id]||[])]:[];
+  const isImb=currentTab==='imb';
   const teamOpts=team.map(p=>`<option value="${esc(p)}"${t.person===p?' selected':''}>${esc(p)}</option>`).join('');
   const areaOpts=AREAS.map(a=>`<option value="${esc(a)}"${t.area===a?' selected':''}>${esc(a)}</option>`).join('');
+  const eventOpts=EVENTS.map(a=>`<option value="${esc(a)}"${t.event_name===a?' selected':''}>${esc(a)}</option>`).join('');
+  const actionOpts=ACTIONS.map(a=>`<option value="${esc(a)}"${t.action_name===a?' selected':''}>${esc(a)}</option>`).join('');
+
+  const fieldSpecific=isImb
+    ?`<div class="form-row"><label>Área</label>
+        <select id="m-area"><option value="">Selecione...</option>${areaOpts}</select>
+      </div>`
+    :`<div class="form-row"><label>Evento</label>
+        <select id="m-event"><option value="">Selecione...</option>${eventOpts}</select>
+      </div>
+      <div class="form-row"><label>Ação</label>
+        <select id="m-action"><option value="">Selecione...</option>${actionOpts}</select>
+      </div>`;
+
   document.getElementById('modal-slot').innerHTML=`
     <div class="modal-bg" onclick="closeBg(event)">
       <div class="modal">
@@ -388,9 +593,7 @@ function openModal(id){
           <input id="m-title" value="${esc(t.title||'')}" placeholder="O que precisa ser feito?"/>
         </div>
         <div class="form-grid">
-          <div class="form-row"><label>Área</label>
-            <select id="m-area"><option value="">Selecione...</option>${areaOpts}</select>
-          </div>
+          ${fieldSpecific}
           <div class="form-row"><label>Responsável</label>
             <select id="m-person"><option value="">Sem responsável</option>${teamOpts}</select>
           </div>
@@ -447,12 +650,8 @@ async function handleUpload(input){
   const files=Array.from(input.files);if(!files.length)return;
   const prog=document.getElementById('upload-progress');prog.style.display='block';
   for(const file of files){
-    try{
-      prog.textContent='Enviando '+file.name+'...';
-      const url=await uploadFile(file);
-      pendingLinks.push({label:file.name.replace(/\.[^.]+$/,''),url});
-      renderLinksList();
-    }catch(e){alert('Erro no upload: '+e.message)}
+    try{prog.textContent='Enviando '+file.name+'...';const url=await uploadFile(file);pendingLinks.push({label:file.name.replace(/\.[^.]+$/,''),url});renderLinksList();}
+    catch(e){alert('Erro no upload: '+e.message)}
   }
   prog.style.display='none';input.value='';
 }
@@ -471,20 +670,13 @@ function renderLinksList(){
 function renderPreview(){
   const p=document.getElementById('links-preview-row');if(!p)return;
   p.innerHTML=pendingLinks.map(l=>{
-    if(l.url&&isImg(l.url))return`<div class="link-preview-item">
-      <img src="${esc(l.url)}" loading="lazy" onclick="openLightbox('${esc(l.url)}')" onerror="this.parentElement.style.display='none'"/>
-      <div class="link-label-preview">${esc(l.label||'Foto')}</div>
-    </div>`;
+    if(l.url&&isImg(l.url))return`<div class="link-preview-item"><img src="${esc(l.url)}" loading="lazy" onclick="openLightbox('${esc(l.url)}')" onerror="this.parentElement.style.display='none'"/><div class="link-label-preview">${esc(l.label||'Foto')}</div></div>`;
     if(l.url&&isPdf(l.url))return`<a href="${esc(l.url)}" target="_blank" class="pdf-pill" style="margin:0 4px 4px 0">PDF ${esc(l.label||'')}</a>`;
     return'';
   }).join('');
 }
 
-function openLightbox(url){
-  const lb=document.createElement('div');lb.className='lightbox';lb.onclick=()=>lb.remove();
-  lb.innerHTML=`<img src="${esc(url)}"/>`;document.body.appendChild(lb);
-}
-
+function openLightbox(url){const lb=document.createElement('div');lb.className='lightbox';lb.onclick=()=>lb.remove();lb.innerHTML=`<img src="${esc(url)}"/>`;document.body.appendChild(lb)}
 function addLinkField(){pendingLinks.push({label:'',url:''});renderLinksList()}
 function removeLink(i){pendingLinks.splice(i,1);renderLinksList()}
 function closeBg(e){if(e.target===e.currentTarget)closeModal()}
@@ -509,8 +701,7 @@ async function addUpdate(){
   const saved=await api('POST','task_updates',{task_id:editingId,text});
   const u=Array.isArray(saved)?saved[0]:saved;
   if(!taskUpdates[editingId])taskUpdates[editingId]=[];
-  taskUpdates[editingId].push(u);input.value='';
-  renderUpdatesList();render();
+  taskUpdates[editingId].push(u);input.value='';renderUpdatesList();render();renderCalendar();
 }
 
 async function deleteUpdate(uid){
@@ -521,10 +712,14 @@ async function deleteUpdate(uid){
 
 async function saveTask(){
   const title=document.getElementById('m-title').value.trim();
-  const area=document.getElementById('m-area').value;
   if(!title){alert('Coloca um título na tarefa.');return}
-  if(!area){alert('Seleciona uma área.');return}
-  const payload={title,area,
+  const isImb=currentTab==='imb';
+  const area=isImb?(document.getElementById('m-area')?.value||null):null;
+  const event_name=!isImb?(document.getElementById('m-event')?.value||null):null;
+  const action_name=!isImb?(document.getElementById('m-action')?.value||null):null;
+  const payload={title,
+    board:currentTab,
+    area,event_name,action_name,
     person:document.getElementById('m-person').value||null,
     stage:document.getElementById('m-stage').value||'idea',
     start_date:document.getElementById('m-start').value||null,
@@ -548,7 +743,7 @@ async function saveTask(){
       const saved=await api('POST','task_links',{task_id:taskId,label:l.label||null,url:l.url.trim()});
       taskLinks[taskId].push(Array.isArray(saved)?saved[0]:saved);
     }
-    closeModal();render();
+    closeModal();render();renderCalendar();
   }catch(e){alert('Erro ao salvar: '+e.message)}
 }
 
@@ -556,9 +751,10 @@ async function deleteTask(id){
   if(!confirm('Excluir essa tarefa?'))return;
   await api('DELETE','tasks?id=eq.'+id);
   tasks=tasks.filter(x=>x.id!==id);delete taskLinks[id];delete taskUpdates[id];
-  closeModal();render();
+  closeModal();render();renderCalendar();
 }
 
+/* ---- TEAM ---- */
 function openTeamModal(){
   document.getElementById('modal-slot').innerHTML=`
     <div class="modal-bg" onclick="closeBg(event)">
@@ -587,14 +783,15 @@ async function addMember(){
   const v=document.getElementById('new-member').value.trim();
   if(!v||team.includes(v))return;
   await api('POST','team_members',{name:v});team.push(v);
-  document.getElementById('new-member').value='';renderTeamList();render();
+  document.getElementById('new-member').value='';renderTeamList();renderFilters();
 }
 async function removeMember(name){
   if(!confirm('Remover '+name+'?'))return;
   await api('DELETE','team_members?name=eq.'+encodeURIComponent(name));
-  team=team.filter(p=>p!==name);renderTeamList();render();
+  team=team.filter(p=>p!==name);renderTeamList();renderFilters();
 }
 
+/* ---- AREAS ---- */
 function openAreasModal(){
   document.getElementById('modal-slot').innerHTML=`
     <div class="modal-bg" onclick="closeBg(event)">
@@ -623,14 +820,89 @@ async function addArea(){
   const v=document.getElementById('new-area').value.trim();
   if(!v||AREAS.includes(v))return;
   await api('POST','areas',{name:v});AREAS.push(v);AREAS.sort((a,b)=>a.localeCompare(b));
-  document.getElementById('new-area').value='';renderAreasList();render();
+  document.getElementById('new-area').value='';renderAreasList();renderFilters();
 }
 async function removeArea(name){
   if(!confirm('Remover área "'+name+'"?'))return;
   await api('DELETE','areas?name=eq.'+encodeURIComponent(name));
-  AREAS=AREAS.filter(a=>a!==name);renderAreasList();render();
+  AREAS=AREAS.filter(a=>a!==name);renderAreasList();renderFilters();
 }
 
+/* ---- EVENTS ---- */
+function openEventsModal(){
+  document.getElementById('modal-slot').innerHTML=`
+    <div class="modal-bg" onclick="closeBg(event)">
+      <div class="modal" style="max-width:400px">
+        <div class="modal-header"><div class="modal-title">Eventos</div><button class="modal-close" onclick="closeModal()">×</button></div>
+        <div id="events-list"></div>
+        <div class="form-row" style="margin-top:16px"><label>Adicionar evento</label>
+          <div style="display:flex;gap:8px">
+            <input id="new-event" placeholder="Nome do evento..." style="flex:1" onkeydown="if(event.key==='Enter')addEvent()"/>
+            <button class="btn btn-red" onclick="addEvent()">Adicionar</button>
+          </div>
+        </div>
+        <div class="modal-actions"><button class="btn" onclick="closeModal()">Fechar</button></div>
+      </div>
+    </div>`;
+  renderEventsList();
+}
+function renderEventsList(){
+  const el=document.getElementById('events-list');if(!el)return;
+  el.innerHTML=EVENTS.map(a=>`<div class="team-member-row">
+    <div class="team-member-name"><div class="avatar" style="background:rgba(79,163,224,0.2);border-color:rgba(79,163,224,0.3);color:#4fa3e0;font-size:9px">${esc(a.substring(0,3).toUpperCase())}</div>${esc(a)}</div>
+    <button class="btn btn-delete" style="padding:5px 12px;font-size:12px" onclick="removeEvent('${esc(a)}')">Remover</button>
+  </div>`).join('');
+}
+async function addEvent(){
+  const v=document.getElementById('new-event').value.trim();
+  if(!v||EVENTS.includes(v))return;
+  await api('POST','events',{name:v});EVENTS.push(v);EVENTS.sort((a,b)=>a.localeCompare(b));
+  document.getElementById('new-event').value='';renderEventsList();renderFilters();
+}
+async function removeEvent(name){
+  if(!confirm('Remover evento "'+name+'"?'))return;
+  await api('DELETE','events?name=eq.'+encodeURIComponent(name));
+  EVENTS=EVENTS.filter(a=>a!==name);renderEventsList();renderFilters();
+}
+
+/* ---- ACTIONS ---- */
+function openActionsModal(){
+  document.getElementById('modal-slot').innerHTML=`
+    <div class="modal-bg" onclick="closeBg(event)">
+      <div class="modal" style="max-width:400px">
+        <div class="modal-header"><div class="modal-title">Ações</div><button class="modal-close" onclick="closeModal()">×</button></div>
+        <div id="actions-list"></div>
+        <div class="form-row" style="margin-top:16px"><label>Adicionar ação</label>
+          <div style="display:flex;gap:8px">
+            <input id="new-action" placeholder="Nome da ação..." style="flex:1" onkeydown="if(event.key==='Enter')addAction()"/>
+            <button class="btn btn-red" onclick="addAction()">Adicionar</button>
+          </div>
+        </div>
+        <div class="modal-actions"><button class="btn" onclick="closeModal()">Fechar</button></div>
+      </div>
+    </div>`;
+  renderActionsList();
+}
+function renderActionsList(){
+  const el=document.getElementById('actions-list');if(!el)return;
+  el.innerHTML=ACTIONS.map(a=>`<div class="team-member-row">
+    <div class="team-member-name"><div class="avatar" style="background:rgba(76,175,125,0.2);border-color:rgba(76,175,125,0.3);color:#4caf7d;font-size:9px">${esc(a.substring(0,3).toUpperCase())}</div>${esc(a)}</div>
+    <button class="btn btn-delete" style="padding:5px 12px;font-size:12px" onclick="removeAction('${esc(a)}')">Remover</button>
+  </div>`).join('');
+}
+async function addAction(){
+  const v=document.getElementById('new-action').value.trim();
+  if(!v||ACTIONS.includes(v))return;
+  await api('POST','actions',{name:v});ACTIONS.push(v);ACTIONS.sort((a,b)=>a.localeCompare(b));
+  document.getElementById('new-action').value='';renderActionsList();renderFilters();
+}
+async function removeAction(name){
+  if(!confirm('Remover ação "'+name+'"?'))return;
+  await api('DELETE','actions?name=eq.'+encodeURIComponent(name));
+  ACTIONS=ACTIONS.filter(a=>a!==name);renderActionsList();renderFilters();
+}
+
+/* ---- INIT ---- */
 if(isAuthValid()){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-screen').style.display='block';
