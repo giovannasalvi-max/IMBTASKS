@@ -422,7 +422,7 @@ function populateSelect(id,items){
 /* ---- RENDER BOARD ---- */
 function render(){
   const b=document.getElementById('board');
-  b.style.gridTemplateColumns='';b.style.minWidth='';
+  b.style.gridTemplateColumns='repeat(4,1fr)';b.style.minWidth='700px';
   const board=currentTab==='imb';
   const fa=board?(document.getElementById('f-area')?.value||''):'';
   const fe=!board?(document.getElementById('f-event')?.value||''):'';
