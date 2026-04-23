@@ -422,7 +422,7 @@ function populateSelect(id,items){
 /* ---- RENDER BOARD ---- */
 function render(){
   const b=document.getElementById('board');
-  b.style.gridTemplateColumns='repeat(4,1fr)';b.style.minWidth='700px';
+  b.style.cssText='';
   const board=currentTab==='imb';
   const fa=board?(document.getElementById('f-area')?.value||''):'';
   const fe=!board?(document.getElementById('f-event')?.value||''):'';
@@ -953,9 +953,7 @@ function renderDatas(){
   const sorted=[...eventCal].sort((a,b)=>a.event_date>b.event_date?1:-1);
   const today=new Date().toISOString().split('T')[0];
   const board=document.getElementById('board');
-  board.style.display='block';
-  board.style.gridTemplateColumns='1fr';
-  board.style.minWidth='0';
+  board.style.cssText='display:block;grid-template-columns:1fr;min-width:0';
   if(!sorted.length){
     board.innerHTML='<div class="empty-col" style="padding:40px;text-align:center;color:var(--muted2)">Nenhum evento cadastrado ainda.</div>';
     return;
